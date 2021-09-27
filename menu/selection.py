@@ -17,7 +17,16 @@ programs_path = 'files/programs'
 suffix = '.txt'
 
 class SelectionFrame(MindstormFrame):
+    '''
+    Selection Frame is where the user can pick a robot, map, and program to execute.
+    '''
+
     def go(self):
+        '''
+        Start the execution of the chosen program with the robot and map.
+
+        :return:
+        '''
         pygame.init()
         py_display = pygame.display.set_mode((800, 800))
 
@@ -47,6 +56,13 @@ class SelectionFrame(MindstormFrame):
             pygame.display.update()
 
     def __init__(self, master, display, frame):
+        '''
+        Initialize the frame.
+
+        :param master: the app that controls the frames
+        :param display: the Tkinter display
+        :param frame: the Tkinter frame
+        '''
         MindstormFrame.__init__(self, master, display, frame)
 
         maps = ['']

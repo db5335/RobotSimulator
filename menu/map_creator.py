@@ -10,10 +10,24 @@ file_name_prefix = 'files/maps/'
 file_name_suffix = '.txt'
 
 class MapCreatorFrame(MindstormFrame):
+    '''
+    Map Creator Frame is used to create a custom map and save it.
+    '''
+
     def update_color(self):
+        '''
+        Update the color of the paint brush.
+
+        :return: None
+        '''
         self.color = (self.red, self.green, self.blue)
 
     def update_brush_size(self):
+        '''
+        Update the size of the paint brush.
+
+        :return: None
+        '''
         try:
             num = int(self.size_textbox.get(1.0, END))
             if num > 0 and num < 101:
@@ -22,6 +36,11 @@ class MapCreatorFrame(MindstormFrame):
             return
 
     def increase_brush_size(self):
+        '''
+        Increase the size of the paint brush.
+
+        :return: None
+        '''
         try:
             num = int(self.size_textbox.get(1.0, END))
             if num + 1 > 0 and num + 1 < 101:
@@ -42,6 +61,11 @@ class MapCreatorFrame(MindstormFrame):
             self.size_textbox.insert(INSERT, str(self.brush_size))
 
     def decrease_brush_size(self):
+        '''
+        Decrease the size of the paint brush.
+
+        :return: None
+        '''
         try:
             num = int(self.size_textbox.get(1.0, END))
             if num - 1 > 0 and num - 1 < 101:
@@ -62,6 +86,11 @@ class MapCreatorFrame(MindstormFrame):
             self.size_textbox.insert(INSERT, str(self.brush_size))
 
     def increase_red(self):
+        '''
+        Increase the RGB red value.
+
+        :return: None
+        '''
         try:
             num = int(self.red_textbox.get(1.0, END))
             if num + 1 >= 0 and num + 1 <= 255:
@@ -83,6 +112,11 @@ class MapCreatorFrame(MindstormFrame):
         self.update_color()
 
     def decrease_red(self):
+        '''
+        Decrease the RGB red value.
+
+        :return: None
+        '''
         try:
             num = int(self.red_textbox.get(1.0, END))
             if num - 1 >= 0 and num - 1 <= 255:
@@ -104,6 +138,11 @@ class MapCreatorFrame(MindstormFrame):
         self.update_color()
 
     def increase_green(self):
+        '''
+        Increase the RGB green value.
+
+        :return: None
+        '''
         try:
             num = int(self.green_textbox.get(1.0, END))
             if num + 1 >= 0 and num + 1 <= 255:
@@ -125,6 +164,11 @@ class MapCreatorFrame(MindstormFrame):
         self.update_color()
 
     def decrease_green(self):
+        '''
+        Decrease the RGB green value.
+
+        :return: None
+        '''
         try:
             num = int(self.green_textbox.get(1.0, END))
             if num - 1 >= 0 and num - 1 <= 255:
@@ -146,6 +190,11 @@ class MapCreatorFrame(MindstormFrame):
         self.update_color()
 
     def increase_blue(self):
+        '''
+        Increase the RGB blue value.
+
+        :return: None
+        '''
         try:
             num = int(self.blue_textbox.get(1.0, END))
             if num + 1 >= 0 and num + 1 <= 255:
@@ -167,6 +216,11 @@ class MapCreatorFrame(MindstormFrame):
         self.update_color()
 
     def decrease_blue(self):
+        '''
+        Decrease the RGB blue value.
+
+        :return: None
+        '''
         try:
             num = int(self.blue_textbox.get(1.0, END))
             if num - 1 >= 0 and num - 1 <= 255:
@@ -188,6 +242,11 @@ class MapCreatorFrame(MindstormFrame):
         self.update_color()
 
     def color_to_hex(self):
+        '''
+        Switch from decimal RGB values to a hex representation of them.
+
+        :return: the hex representation of the RGB values
+        '''
         hex_str = '#'
         red = hex(self.red)[2:]
         if len(red) == 1:
@@ -203,6 +262,11 @@ class MapCreatorFrame(MindstormFrame):
         return hex_str + blue
 
     def update_color_label(self):
+        '''
+        Update the color display.
+
+        :return: None
+        '''
         try:
             self.red = int(self.red_textbox.get(1.0, END))
             self.green = int(self.green_textbox.get(1.0, END))
@@ -214,6 +278,11 @@ class MapCreatorFrame(MindstormFrame):
             self.message_label.config(text='Invalid color!')
 
     def check_file_name(self):
+        '''
+        Check if the file name is already taken.
+
+        :return: whether or not it is taken
+        '''
         file_name = self.name_textbox.get(1.0, END)
         file_name = file_name[:-1]
         for c in file_name:
@@ -227,6 +296,11 @@ class MapCreatorFrame(MindstormFrame):
         return True
 
     def save(self):
+        '''
+        Save the map in a file.
+
+        :return: None
+        '''
         global file_name_prefix, file_name_suffix
         if self.check_file_name():
             self.message_label.config(text='')
@@ -246,6 +320,13 @@ class MapCreatorFrame(MindstormFrame):
             self.message_label.config(text='Invalid map name!')
 
     def __init__(self, master, display, frame):
+        '''
+        Initialize the frame.
+
+        :param master: the app that controls the frames
+        :param display: the Tkinter display
+        :param frame: the Tkinter frame
+        '''
         MindstormFrame.__init__(self, master, display, frame)
         self.brush_size = 2
         self.red = 255
@@ -299,6 +380,11 @@ class MapCreatorFrame(MindstormFrame):
         self.done = True
 
     def run(self):
+        '''
+        Run the pygame frame that shows the map as it is being edited.
+
+        :return: None
+        '''
         pygame.init()
         py_display = pygame.display.set_mode((800, 800))
         py_display.fill((0, 0, 0))

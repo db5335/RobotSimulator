@@ -8,13 +8,22 @@ from menu.mindstorm_frame import MindstormFrame
 from robot.base import Base
 from robot.color_sensor import ColorSensor
 from robot.touch_sensor import TouchSensor
-
+from robot.ultrasound_sensor import UltrasoundSensor
 
 file_name_prefix = 'files/robots/'
 file_name_suffix = '.txt'
 
 class RobotCreatorFrame(MindstormFrame):
+    '''
+    Robot Creator Frame allows the user to create a custom robot.
+    '''
+
     def add_component(self):
+        '''
+        Add a component to the robot in the specified port.
+
+        :return: None
+        '''
         sensor_str = self.sensor.get()
         sensor = None
         if sensor_str == 'Touch Sensor':
@@ -22,11 +31,16 @@ class RobotCreatorFrame(MindstormFrame):
         elif sensor_str == 'Color Sensor':
             sensor = ColorSensor(self.robot)
         elif sensor_str == 'Ultrasound Sensor':
-            pass
+            sensor = UltrasoundSensor(self.robot)
 
         self.robot.add_component(sensor, self.port.get())
 
     def check_file_name(self):
+        '''
+        Check if the file name already exists.
+
+        :return: whether or not the file name is already taken
+        '''
         file_name = self.name_textbox.get(1.0, END)
         file_name = file_name[:-1]
         for c in file_name:
@@ -38,8 +52,14 @@ class RobotCreatorFrame(MindstormFrame):
             else:
                 return False
         return True
+    # TODO create a separate file with the check_file_name function
 
     def save(self):
+        '''
+        Save the robot in a file.
+
+        :return: None
+        '''
         global file_name_prefix, file_name_suffix
         if self.check_file_name():
             self.message_label.config(text='')
@@ -57,6 +77,13 @@ class RobotCreatorFrame(MindstormFrame):
             self.message_label.config(text='Invalid robot name!')
 
     def __init__(self, master, display, frame):
+        '''
+        Initialize the frame.
+
+        :param master: the app that controls the frames
+        :param display: the Tkinter display
+        :param frame: the Tkinter frame
+        '''
         MindstormFrame.__init__(self, master, display, frame)
         self.saved = False
 
@@ -92,6 +119,11 @@ class RobotCreatorFrame(MindstormFrame):
         self.run()
 
     def run(self):
+        '''
+        Display the pygame frame as the robot is being constructed.
+
+        :return: None
+        '''
         pygame.init()
         py_display = pygame.display.set_mode((800, 800))
         py_display.fill((0, 0, 0))

@@ -1,5 +1,12 @@
 class MapGrid():
+    '''
+    Class for the grid on which the robot will run.
+    '''
+
     def __init__(self):
+        '''
+        Initialize an empty, black grid.
+        '''
         self.grid = []
         self.size = 800
         for i in range(0, self.size):
@@ -8,15 +15,34 @@ class MapGrid():
                 self.grid[i].append((0, 0, 0))
 
     def open_file(self, file_name):
+        '''
+        Open the map file.
+
+        :param file_name: name of the file
+        :return: None
+        '''
         self.file = open(file_name, 'w')
 
     def close_file(self):
+        '''
+        Close the map file.
+
+        :return: None
+        '''
         if self.file is None:
             return
 
         self.file.close()
 
     def compress(self, row, col, size):
+        '''
+        Compress the map and write it to the file.
+
+        :param row: the current row
+        :param col: the current column
+        :param size: the size of the box to compress
+        :return: None
+        '''
         size = int(size)
         row = int(row)
         col = int(col)

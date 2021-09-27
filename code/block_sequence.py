@@ -1,6 +1,6 @@
 from code.and_condition import AndCondition
 from code.color_condition import ColorCondition
-from code.conditions import TouchConditions, ColorConditions
+from code.conditions import TouchConditions, ColorConditions, UltrasoundConditions
 from code.loop import Loop
 from code.move_block import *
 from code.or_condition import OrCondition
@@ -8,13 +8,30 @@ from code.simple_move_block import SimpleMoveBlock
 from code.simple_turn_block import SimpleTurnBlock
 from code.touch_condition import TouchCondition
 from code.turn_block import *
+from code.ultrasound_condition import UltrasoundCondition
+
 
 class BlockSequence:
+    '''
+    This class contains the sequence of actions the robot will take.
+    '''
+
     def __init__(self):
+        '''
+        Create an empty sequence of actions.
+        '''
         self.actions = []
         self.loop = self
 
     def create_from_file(self, display, target, file_name):
+        '''
+        Create a sequence from a given file.
+
+        :param display: the display for the application
+        :param target: the robot
+        :param file_name: the file to read from
+        :return: None
+        '''
         self.display = display
         self.target = target
         with open(file_name) as file:
@@ -33,6 +50,12 @@ class BlockSequence:
                     self.create_loop(fields, loop, 1)
 
     def create_move_block(self, fields):
+        '''
+        Add a new move block.
+
+        :param fields: arguments after the move command
+        :return: None
+        '''
         direction = MoveDirection.FORWARD
         if fields[1] == 'f' or fields[1] == 'forward':
             pass
@@ -55,6 +78,12 @@ class BlockSequence:
         return True
 
     def create_turn_block(self, fields):
+        '''
+        Add a new turn block.
+
+        :param fields: the arguments after the turn command
+        :return: None
+        '''
         direction = TurnDirection.COUNTER_CLOCKWISE
         if fields[1] == 'ccw' or fields[1] == 'counterclockwise':
             pass
@@ -78,12 +107,22 @@ class BlockSequence:
         return True
 
     def create_loop(self, fields, loop, index):
+        '''
+        Create a new loop of actions.
+
+        :param fields: the arguments after a loop command
+        :param loop: the current loop
+        :param index: the index of the arguments
+        :return: None
+        '''
         condition_class = None
         while True:
             if fields[index] == 'touch':
                 val = self.create_touch_loop(fields, loop, index + 1, condition_class)
             elif fields[index] == 'color':
                 val = self.create_color_loop(fields, loop, index + 1, condition_class)
+            elif fields[index] == 'ultrasound':
+                val = self.create_ultrasound_loop(fields, loop, index + 1, condition_class)
             if fields[val] == 'or':
                 condition_class = OrCondition
                 index = val + 1
@@ -94,6 +133,12 @@ class BlockSequence:
                 break
 
     def word_to_color(self, word):
+        '''
+        Convert a word to its corresponding color.
+
+        :param word: the name of the color
+        :return: RGB tuple
+        '''
         if word == 'red':
             return (255, 0, 0)
         if word == 'green':
@@ -106,6 +151,12 @@ class BlockSequence:
             return (255, 255, 255)
 
     def list_to_color(self, list):
+        '''
+        Turn a list of numbers into a color.
+
+        :param list: list of numbers
+        :return: RGB tuple
+        '''
         nums = '1234567890'
         red_str = ''
         for c in list[0]:
@@ -121,7 +172,79 @@ class BlockSequence:
                 blue_str = blue_str + c
         return (int(red_str), int(green_str), int(blue_str))
 
+    def create_ultrasound_loop(self, fields, loop, index, condition_class):
+        '''
+        Create a loop based on an ultrasound sensor.
+
+        :param fields: the remaining fields in the line
+        :param loop: the current loop
+        :param index: the index in the fields
+        :param condition_class: extra conditions to add to
+        :return: None
+        '''
+        try:
+            port = int(fields[index])
+            if port not in range(1, 17):
+                return False
+            sensor = self.target.get_component_by_port(port)
+            condition = None
+            while True:
+                index += 1
+                if fields[index] == 'less':
+                    ultrasound_condition = UltrasoundConditions.LESS_THAN
+                    index += 1
+                    if fields[index] == 'than':
+                        index += 1
+                        try:
+                            distance = float(fields[index])
+                        except:
+                            return False
+                elif fields[index] == 'greater':
+                    ultrasound_condition = UltrasoundConditions.GREATER_THAN
+                    index += 1
+                    if fields[index] == 'than':
+                        index += 1
+                        try:
+                            distance = float(fields[index])
+                        except:
+                            return False
+                elif fields[index] == '<':
+                    ultrasound_condition = UltrasoundConditions.LESS_THAN
+                    index += 1
+                    try:
+                        distance = float(fields[index])
+                    except:
+                        return False
+                elif fields[index] == '>':
+                    ultrasound_condition = UltrasoundConditions.GREATER_THAN
+                    index += 1
+                    try:
+                        distance = float(fields[index])
+                    except:
+                        return False
+                else:
+                    return False
+                index += 1
+                if fields[index] == '{\n':
+                    new_condition = UltrasoundCondition(ultrasound_condition, sensor, distance)
+                    if condition_class is None:
+                        loop.add_condition(new_condition)
+                    else:
+                        loop.add_new_condition(condition_class, new_condition)
+                    return True
+        except:
+            return False
+
     def create_color_loop(self, fields, loop, index, condition_class):
+        '''
+        Create a loop based on a color sensor.
+
+        :param fields: the remaining fields in the line
+        :param loop: the current loop
+        :param index: the index in the fields
+        :param condition_class: extra conditions to add to
+        :return: None
+        '''
         try:
             port = int(fields[index])
             if port not in range(1, 17):
@@ -185,6 +308,15 @@ class BlockSequence:
             return False
 
     def create_touch_loop(self, fields, loop, index, condition_class):
+        '''
+        Create a loop based on a touch sensor.
+
+        :param fields: the remaining fields in the line
+        :param loop: the current loop
+        :param index: the index in the fields
+        :param condition_class: extra conditions to add to
+        :return: None
+        '''
         try:
             port = int(fields[index])
             if port not in range(1, 17):
@@ -230,8 +362,19 @@ class BlockSequence:
             return False
 
     def add_action(self, action):
+        '''
+        Add an action to the sequence.
+
+        :param action: the action to add
+        :return: None
+        '''
         self.actions.append(action)
 
     def execute(self):
+        '''
+        Execute the actions.
+
+        :return: None
+        '''
         for block in self.actions:
             block.execute()

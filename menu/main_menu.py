@@ -10,23 +10,55 @@ from menu.selection import SelectionFrame
 
 
 class MainMenuFrame(MindstormFrame):
+    '''
+    Main Menu Frame is used to navigate between the map creator,
+    robot creator, and programming frames.
+    '''
+
     def switch_to_robot_creator(self):
+        '''
+        Switch the frame to the robot creator.
+
+        :return: None
+        '''
         self.frame.destroy()
         self.master.switch_frame(RobotCreatorFrame)
 
     def switch_to_map_creator(self):
+        '''
+        Switch the frame to the map creator.
+
+        :return: None
+        '''
         self.frame.destroy()
         self.master.switch_frame(MapCreatorFrame)
 
     def switch_to_program_writer(self):
+        '''
+        Switch the frame to the program writer.
+
+        :return: None
+        '''
         self.frame.destroy()
         self.master.switch_frame(ProgramWriterFrame)
 
     def run(self):
+        '''
+        Switch the frame to the selection frame.
+
+        :return: None
+        '''
         self.frame.destroy()
         self.master.switch_frame(SelectionFrame)
 
     def __init__(self, master, display, frame):
+        '''
+        Initialize the frame.
+
+        :param master: the app that controls the frames
+        :param display: the Tkinter display
+        :param frame: the Tkinter frame
+        '''
         MindstormFrame.__init__(self, master, display, frame)
         Button(self, text='Make your own robot!', command=self.switch_to_robot_creator).grid(column=0, row=0)
         Button(self, text='Create your own map!', command=self.switch_to_map_creator).grid(column=0, row=1)

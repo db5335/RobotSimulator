@@ -7,7 +7,16 @@ file_name_prefix = 'files/programs/'
 file_name_suffix = '.txt'
 
 class ProgramWriterFrame(MindstormFrame):
+    '''
+    Program Writer Frame allows the user to create a custom program.
+    '''
+
     def check_file_name(self):
+        '''
+        Check if the file name already exists.
+
+        :return: whether or not the file name has been taken
+        '''
         file_name = self.name_textbox.get(1.0, END)
         file_name = file_name[:-1]
         for c in file_name:
@@ -21,6 +30,11 @@ class ProgramWriterFrame(MindstormFrame):
         return True
 
     def save(self):
+        '''
+        Save the program in a file.
+
+        :return: None
+        '''
         global file_name_prefix, file_name_suffix
         if self.check_file_name():
             self.message_label.config(text='')
@@ -37,6 +51,13 @@ class ProgramWriterFrame(MindstormFrame):
                 self.master.switch_frame(MainMenuFrame)
 
     def __init__(self, master, display, frame):
+        '''
+        Initialize the frame.
+
+        :param master: the app that controls the frames
+        :param display: the Tkinter display
+        :param frame: the Tkinter frame
+        '''
         MindstormFrame.__init__(self, master, display, frame)
         Label(self, text='Program Name:').grid(column=0, row=0)
         self.name_textbox = Text(self, width=25, height=1)

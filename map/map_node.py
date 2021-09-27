@@ -1,8 +1,20 @@
 import pygame
 
-
 class MapNode():
+    '''
+    Node representing the compressed map. Each node may have a color associated with
+    it, meaning it is a uniform square, or multiple child nodes.
+    '''
+
     def __init__(self, lines, x, y, size):
+        '''
+        Create a map node from lines in a map file.
+
+        :param lines: lines from the map file
+        :param x: the x coordinate
+        :param y: the y coordinate
+        :param size: size of the box the node represents
+        '''
         self.x = x
         self.y = y
         self.size = size
@@ -38,6 +50,12 @@ class MapNode():
                     self.children.append(MapNode(lines, x + j, y + 24, 1))
 
     def draw(self, display):
+        '''
+        Draw the part of the map this node represents.
+
+        :param display: the display on which to draw
+        :return: None
+        '''
         if self.value != -1:
             pygame.draw.rect(display, self.value, (self.x, self.y, self.size, self.size))
         else:
@@ -45,6 +63,12 @@ class MapNode():
                 child.draw(display)
 
     def write(self, grid):
+        '''
+        Convert the compressed map to a regular grid.
+
+        :param grid: the grid to write to
+        :return: None
+        '''
         if self.value != -1:
             for i in range(self.x, self.x + self.size):
                 for j in range(self.y, self.y + self.size):
